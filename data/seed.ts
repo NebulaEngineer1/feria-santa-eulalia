@@ -302,6 +302,7 @@ export const COMBOS: Combo[] = [
     ],
     price: 13800,
     originalPrice: 16400,
+    serves: "2 personas",
   },
   {
     id: "c-003",
@@ -319,6 +320,7 @@ export const COMBOS: Combo[] = [
     ],
     price: 8900,
     originalPrice: 10100,
+    serves: "2 personas",
     badge: "Orgánico certificado",
   },
 ];
