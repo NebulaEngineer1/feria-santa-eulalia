@@ -4,7 +4,7 @@ import { formatCRC } from "@/lib/format";
 // Número receptor de pedidos. Reemplazar con el número real en producción.
 // Formato internacional sin "+", sin espacios, sin guiones.
 // Ejemplo CR: 50688887777
-export const WHATSAPP_NUMBER = "50688887777";
+export const WHATSAPP_NUMBER = "50688555027";
 
 interface BuildMessageInput {
   cart: CartItem[];
