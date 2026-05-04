@@ -347,6 +347,12 @@ function CheckoutStep({
   onChange: <K extends keyof CheckoutForm>(k: K, v: CheckoutForm[K]) => void;
   selectedZone?: { schedule: string[] };
 }) {
+  const [phoneTouched, setPhoneTouched] = useState(false);
+  const phoneError =
+    phoneTouched && form.phone.length !== 8
+      ? "El teléfono debe tener 8 dígitos"
+      : null;
+
   return (
     <div className="px-5 py-6 space-y-7">
       {/* Tipo de entrega */}
@@ -379,6 +385,8 @@ function CheckoutStep({
           value={form.phone}
           inputMode="tel"
           onChange={(v) => onChange("phone", v.replace(/[^0-9]/g, "").slice(0, 8))}
+          onBlur={() => setPhoneTouched(true)}
+          error={phoneError}
         />
       </FieldGroup>
 
@@ -506,21 +514,36 @@ function Input({
   value,
   onChange,
   inputMode,
+  onBlur,
+  error,
 }: {
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
   inputMode?: "text" | "tel" | "numeric" | "email";
+  onBlur?: () => void;
+  error?: string | null;
 }) {
   return (
-    <input
-      type="text"
-      inputMode={inputMode}
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-cream-100 border border-transparent focus:bg-cream-50 focus:border-moss-700 focus:ring-2 focus:ring-moss-700/10 rounded-xl px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 outline-none transition-all"
-    />
+    <div>
+      <input
+        type="text"
+        inputMode={inputMode}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+        aria-invalid={Boolean(error)}
+        className={`w-full bg-cream-100 border rounded-xl px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 outline-none transition-all focus:bg-cream-50 focus:ring-2 ${
+          error
+            ? "border-terra-500 focus:border-terra-600 focus:ring-terra-500/15"
+            : "border-transparent focus:border-moss-700 focus:ring-moss-700/10"
+        }`}
+      />
+      {error && (
+        <p className="mt-1.5 text-xs text-terra-600 font-medium">{error}</p>
+      )}
+    </div>
   );
 }
 
