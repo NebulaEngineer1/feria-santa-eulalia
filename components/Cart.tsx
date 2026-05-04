@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CartItem, CheckoutForm, ZoneId, DeliveryType, PaymentMethod } from "@/lib/types";
 import { ZONES } from "@/data/seed";
 import { formatCRC } from "@/lib/format";
@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   MessageCircle,
   ShieldCheck,
+  Check,
 } from "lucide-react";
 
 interface Props {
@@ -26,7 +27,7 @@ interface Props {
   onClearCart: () => void;
 }
 
-type Step = "cart" | "checkout";
+type Step = "cart" | "checkout" | "success";
 
 const initialForm: CheckoutForm = {
   name: "",
@@ -42,7 +43,9 @@ const initialForm: CheckoutForm = {
 export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, onClearCart }: Props) {
   const [step, setStep] = useState<Step>("cart");
   const [form, setForm] = useState<CheckoutForm>(initialForm);
-  const [submitting, setSubmitting] = useState(false);
+  const [orderCode, setOrderCode] = useState<string | null>(null);
+  // Ref síncrono para bloquear doble-submit aún si dos clicks ocurren en el mismo tick.
+  const submittedRef = useRef(false);
 
   // Bloquear scroll body cuando está abierto
   useEffect(() => {
@@ -87,12 +90,13 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
   }, [form]);
 
   const handleSubmit = () => {
-    if (!isFormValid || items.length === 0 || submitting) return;
-    setSubmitting(true);
+    if (submittedRef.current) return;
+    if (!isFormValid || items.length === 0) return;
+    submittedRef.current = true;
 
-    const orderCode = generateOrderCode();
+    const code = generateOrderCode();
     const message = buildWhatsAppMessage({
-      orderCode,
+      orderCode: code,
       cart: items,
       form,
       subtotal,
@@ -102,14 +106,31 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
     });
     const link = buildWhatsAppLink(message);
 
-    // Mostrar "Enviando..." durante 2s antes de navegar.
-    // No limpiar el carrito antes porque eso hace desaparecer el footer (gated en items.length > 0).
-    setTimeout(() => {
+    // Pasar a pantalla de confirmación y abrir WhatsApp en nueva pestaña.
+    // El carrito se limpia recién al "Volver al mercado" para que el código siga visible.
+    setOrderCode(code);
+    setStep("success");
+    window.open(link, "_blank", "noopener,noreferrer");
+  };
+
+  const handleReturnToMarket = () => {
+    submittedRef.current = false;
+    onClearCart();
+    setForm(initialForm);
+    setOrderCode(null);
+    setStep("cart");
+    onClose();
+  };
+
+  // Si cierran el drawer estando en success (X o overlay), tratamos como confirmación.
+  const handleCloseDrawer = () => {
+    if (step === "success") {
+      submittedRef.current = false;
       onClearCart();
       setForm(initialForm);
-      setStep("cart");
-      window.location.href = link;
-    }, 2000);
+      setOrderCode(null);
+    }
+    onClose();
   };
 
   const updateForm = <K extends keyof CheckoutForm>(key: K, value: CheckoutForm[K]) => {
@@ -123,7 +144,7 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
         className={`fixed inset-0 bg-ink/40 backdrop-blur-sm z-50 transition-opacity duration-300 ${
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        onClick={onClose}
+        onClick={handleCloseDrawer}
       />
 
       {/* Drawer */}
@@ -148,16 +169,22 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
             )}
             <div>
               <span className="text-[10px] tracking-[0.22em] uppercase text-moss-600">
-                Paso {step === "cart" ? "1" : "2"} de 2
+                {step === "cart"
+                  ? "Paso 1 de 2"
+                  : step === "checkout"
+                  ? "Paso 2 de 2"
+                  : "Confirmación"}
               </span>
-              <h2 className="font-display text-2xl text-ink tracking-tight leading-none mt-0.5">
-                {step === "cart" ? "Tu canasta" : "Tus datos"}
-              </h2>
+              {step !== "success" && (
+                <h2 className="font-display text-2xl text-ink tracking-tight leading-none mt-0.5">
+                  {step === "cart" ? "Tu canasta" : "Tus datos"}
+                </h2>
+              )}
             </div>
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleCloseDrawer}
             aria-label="Cerrar"
             className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-moss-100 transition-colors"
           >
@@ -182,10 +209,23 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
               selectedZone={selectedZone}
             />
           )}
+          {step === "success" && orderCode && (
+            <SuccessStep orderCode={orderCode} />
+          )}
         </div>
 
         {/* Footer fijo */}
-        {items.length > 0 && (
+        {step === "success" ? (
+          <footer className="border-t border-moss-100 bg-cream-50 p-5">
+            <button
+              type="button"
+              onClick={handleReturnToMarket}
+              className="w-full bg-moss-800 hover:bg-moss-900 text-cream-50 py-4 rounded-full font-semibold text-base flex items-center justify-center gap-2 transition-all btn-organic shadow-soft"
+            >
+              Volver al mercado
+            </button>
+          </footer>
+        ) : items.length > 0 && (
           <footer className="border-t border-moss-100 bg-cream-50 p-5 space-y-4">
             {step === "checkout" && (
               <div className="space-y-1.5 text-sm">
@@ -233,11 +273,11 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={!isFormValid || submitting}
+                disabled={!isFormValid}
                 className="w-full bg-[#25D366] hover:bg-[#1da851] disabled:bg-moss-100 disabled:text-ink-soft/50 disabled:cursor-not-allowed text-white py-4 rounded-full font-semibold text-base flex items-center justify-center gap-2.5 transition-all btn-organic shadow-soft"
               >
                 <MessageCircle className="w-5 h-5" />
-                {submitting ? "Enviando..." : "Enviar pedido por WhatsApp"}
+                Enviar pedido por WhatsApp
               </button>
             )}
 
@@ -253,6 +293,33 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
 }
 
 /* --------- Sub-components --------- */
+
+function SuccessStep({ orderCode }: { orderCode: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center px-8 py-16">
+      <div className="w-20 h-20 rounded-full bg-moss-100 flex items-center justify-center mb-6">
+        <Check className="w-10 h-10 text-moss-700" strokeWidth={2.5} />
+      </div>
+
+      <h3 className="font-display text-3xl text-ink tracking-tight">
+        ¡Pedido enviado!
+      </h3>
+
+      <div className="mt-7 px-7 py-5 bg-cream-100 rounded-2xl border border-moss-100">
+        <p className="text-[10px] tracking-[0.22em] uppercase text-moss-600 mb-2">
+          Tu código es
+        </p>
+        <p className="font-display text-4xl text-moss-800 tracking-tight tabular-nums">
+          {orderCode}
+        </p>
+      </div>
+
+      <p className="mt-7 text-sm text-ink-soft leading-relaxed max-w-xs">
+        Te contactaremos por WhatsApp para confirmar tu pedido.
+      </p>
+    </div>
+  );
+}
 
 function CartStep({
   items,
