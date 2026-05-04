@@ -81,7 +81,7 @@ export const PRODUCTS: Product[] = [
     description: "Cremoso, listo para consumir en 2-3 días.",
     category: "frutas",
     supplier: "Familia Quesada",
-    supplierLocation: "Heredia",
+    supplierLocation: "Atenas",
     price: 2500,
     unit: "kg",
     image:
@@ -148,7 +148,7 @@ export const PRODUCTS: Product[] = [
     description: "Masa madre, fermentación 36 horas, harina molida en piedra.",
     category: "panaderia",
     supplier: "Horno de Doña Cecilia",
-    supplierLocation: "Heredia",
+    supplierLocation: "Atenas",
     price: 2800,
     unit: "unidad",
     image:
@@ -162,7 +162,7 @@ export const PRODUCTS: Product[] = [
     description: "Receta tradicional, masa hojaldrada hecha a mano.",
     category: "panaderia",
     supplier: "Horno de Doña Cecilia",
-    supplierLocation: "Heredia",
+    supplierLocation: "Atenas",
     price: 600,
     unit: "unidad",
     image:

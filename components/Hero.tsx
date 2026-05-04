@@ -50,7 +50,7 @@ export function Hero() {
             <p className="text-base sm:text-lg text-ink-soft leading-relaxed max-w-md">
               Productos frescos de
               <span className="font-display italic text-moss-700"> 18 productores </span>
-              de la zona de Heredia. Hacé tu pedido hoy y lo llevamos a tu casa el mismo día.
+              de la zona de Atenas. Hacé tu pedido hoy y lo llevamos a tu casa el mismo día.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">

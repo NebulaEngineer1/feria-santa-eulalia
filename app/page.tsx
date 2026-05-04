@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { CombosSection } from "@/components/CombosSection";
 import { Marquee } from "@/components/Marquee";
 import { ProducersSection } from "@/components/ProducersSection";
+import { FAQSection } from "@/components/FAQSection";
 import { Footer } from "@/components/Footer";
 import { Cart } from "@/components/Cart";
 import { useCart } from "@/lib/useCart";
@@ -139,6 +140,8 @@ export default function Home() {
       <CombosSection onAddCombo={handleAddCombo} />
 
       <ProducersSection />
+
+      <FAQSection />
 
       <Footer />
 

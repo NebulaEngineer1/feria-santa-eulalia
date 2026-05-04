@@ -1,6 +1,6 @@
 # Feria Santa Eulalia · Marketplace MVP
 
-Marketplace web para la feria del agricultor de Santa Eulalia (Heredia, Costa Rica). Permite a clientes hacer pedidos desde web y enviarlos por WhatsApp a la administración central.
+Marketplace web para la feria del agricultor de Santa Eulalia (Atenas, Costa Rica). Permite a clientes hacer pedidos desde web y enviarlos por WhatsApp a la administración central.
 
 Estética **organic editorial** — tipografía Fraunces + Manrope, paleta moss/cream/terra, layouts asimétricos tipo revista. Pensado para sentirse artesanal, no como una tienda genérica.
 
@@ -80,7 +80,7 @@ El mensaje generado se ve así en WhatsApp:
 • Nombre: María Pérez
 • Teléfono: 88887777
 • Dirección: 200m sur del parque
-• Zona: 2 — San Rafael de Heredia
+• Zona: 2 — San Rafael de Atenas
 • Horario: 9:00 — 11:00 AM
 
 📦 Productos

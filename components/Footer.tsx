@@ -78,7 +78,7 @@ export function Footer() {
                 </span>
               </div>
               <p className="text-cream-100/70 text-sm leading-relaxed max-w-sm">
-                Conectamos productores locales de la zona de Heredia con familias que valoran la comida fresca, sana y de origen conocido.
+                Conectamos productores locales de la zona de Atenas con familias que valoran la comida fresca, sana y de origen conocido.
               </p>
 
               <div className="flex items-center gap-3 mt-6">
@@ -128,7 +128,7 @@ export function Footer() {
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
                 <div>
                   <p>Salón comunal Santa Eulalia</p>
-                  <p className="opacity-70">Heredia, Costa Rica</p>
+                  <p className="opacity-70">Atenas, Costa Rica</p>
                   <p className="mt-2 italic font-display text-cream-100/60">
                     Viernes 6 AM — 1 PM · Sábado 6 AM — 12 PM
                   </p>

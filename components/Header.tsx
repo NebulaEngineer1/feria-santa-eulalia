@@ -21,7 +21,7 @@ export function Header({ itemCount, onCartClick }: Props) {
           </div>
           <div className="hidden md:flex items-center gap-1.5 opacity-80">
             <MapPin className="w-3 h-3" />
-            <span>Heredia, Costa Rica</span>
+            <span>Atenas, Costa Rica</span>
           </div>
         </div>
       </div>

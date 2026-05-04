@@ -6,7 +6,7 @@ const ITEMS = [
   "✦ Pago al productor en 24 horas",
   "Apoyo directo al campo",
   "✦ Empaque biodegradable",
-  "Heredia · Costa Rica",
+  "Atenas · Costa Rica",
 ];
 
 export function Marquee() {

@@ -12,7 +12,7 @@ const PRODUCERS = [
   },
   {
     name: "Doña Cecilia",
-    location: "Heredia",
+    location: "Atenas",
     quote:
       "El pan se hace con tiempo. Mi masa madre tiene siete años y la cuido como a mis nietos.",
     image:
@@ -21,7 +21,7 @@ const PRODUCERS = [
   },
   {
     name: "Familia Quesada",
-    location: "Heredia",
+    location: "Atenas",
     quote:
       "Aguacates Hass de altura. Cosechamos solo cuando están en su punto exacto.",
     image:
