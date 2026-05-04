@@ -2,6 +2,7 @@
 
 import { ZONES } from "@/data/seed";
 import { formatCRC } from "@/lib/format";
+import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 import { MapPin, Clock, Phone, Instagram, Mail } from "lucide-react";
 
 export function Footer() {
@@ -89,7 +90,7 @@ export function Footer() {
                   <Instagram className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://wa.me/50688887777"
+                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="WhatsApp"

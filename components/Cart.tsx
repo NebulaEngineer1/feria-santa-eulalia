@@ -5,7 +5,7 @@ import { CartItem, CheckoutForm, ZoneId, DeliveryType, PaymentMethod } from "@/l
 import { ZONES } from "@/data/seed";
 import { formatCRC } from "@/lib/format";
 import { QuantityStepper } from "./QuantityStepper";
-import { buildWhatsAppMessage, buildWhatsAppLink } from "@/lib/whatsapp";
+import { buildWhatsAppMessage, buildWhatsAppLink, generateOrderCode } from "@/lib/whatsapp";
 import {
   X,
   Trash2,
@@ -42,6 +42,7 @@ const initialForm: CheckoutForm = {
 export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, onClearCart }: Props) {
   const [step, setStep] = useState<Step>("cart");
   const [form, setForm] = useState<CheckoutForm>(initialForm);
+  const [submitting, setSubmitting] = useState(false);
 
   // Bloquear scroll body cuando está abierto
   useEffect(() => {
@@ -76,7 +77,9 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
   const total = subtotal + deliveryFee;
 
   const isFormValid = useMemo(() => {
-    if (!form.name.trim() || !form.phone.trim() || !form.schedule) return false;
+    if (!form.name.trim() || !form.schedule) return false;
+    // Teléfono Costa Rica: exactamente 8 dígitos, solo números.
+    if (!/^\d{8}$/.test(form.phone)) return false;
     if (form.deliveryType === "domicilio") {
       if (!form.address.trim() || !form.zone) return false;
     }
@@ -84,12 +87,12 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
   }, [form]);
 
   const handleSubmit = () => {
-    console.log("CLICK DETECTED", { isFormValid, itemCount: items.length, form });
-    if (!isFormValid || items.length === 0) {
-      console.log("CLICK ABORTED — guard failed", { isFormValid, itemCount: items.length });
-      return;
-    }
+    if (!isFormValid || items.length === 0 || submitting) return;
+    setSubmitting(true);
+
+    const orderCode = generateOrderCode();
     const message = buildWhatsAppMessage({
+      orderCode,
       cart: items,
       form,
       subtotal,
@@ -98,8 +101,15 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
       zone: selectedZone,
     });
     const link = buildWhatsAppLink(message);
-    console.log("REDIRECTING TO", link);
-    window.location.href = link;
+
+    // Mostrar "Enviando..." durante 2s antes de navegar.
+    // No limpiar el carrito antes porque eso hace desaparecer el footer (gated en items.length > 0).
+    setTimeout(() => {
+      onClearCart();
+      setForm(initialForm);
+      setStep("cart");
+      window.location.href = link;
+    }, 2000);
   };
 
   const updateForm = <K extends keyof CheckoutForm>(key: K, value: CheckoutForm[K]) => {
@@ -223,11 +233,11 @@ export function Cart({ open, onClose, items, subtotal, onUpdateQty, onRemove, on
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={!isFormValid}
+                disabled={!isFormValid || submitting}
                 className="w-full bg-[#25D366] hover:bg-[#1da851] disabled:bg-moss-100 disabled:text-ink-soft/50 disabled:cursor-not-allowed text-white py-4 rounded-full font-semibold text-base flex items-center justify-center gap-2.5 transition-all btn-organic shadow-soft"
               >
                 <MessageCircle className="w-5 h-5" />
-                Enviar pedido por WhatsApp
+                {submitting ? "Enviando..." : "Enviar pedido por WhatsApp"}
               </button>
             )}
 

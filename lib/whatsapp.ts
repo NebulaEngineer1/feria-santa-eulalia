@@ -1,12 +1,12 @@
 import { CartItem, CheckoutForm, Zone } from "@/lib/types";
 import { formatCRC } from "@/lib/format";
 
-// Número receptor de pedidos. Reemplazar con el número real en producción.
+// Configuración única del número receptor de pedidos.
 // Formato internacional sin "+", sin espacios, sin guiones.
-// Ejemplo CR: 50688887777
 export const WHATSAPP_NUMBER = "50688555027";
 
 interface BuildMessageInput {
+  orderCode: string;
   cart: CartItem[];
   form: CheckoutForm;
   subtotal: number;
@@ -27,29 +27,48 @@ const DELIVERY_LABELS: Record<string, string> = {
 };
 
 /**
- * Construye un mensaje de pedido legible y bien formateado.
- * Incluye encabezado, cliente, productos, totales y método de pago.
+ * Genera un código único de pedido tipo FSE-2026-XXXX.
+ * Suficiente para volumen bajo sin backend; ~1.6M combinaciones por año.
+ */
+export function generateOrderCode(): string {
+  const year = new Date().getFullYear();
+  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `FSE-${year}-${random}`;
+}
+
+/**
+ * Construye el mensaje de pedido para WhatsApp.
+ * Formato sin emojis: usa etiquetas tipo [SECCION] para evitar problemas de encoding/fuente.
+ * Orden: código, cliente, entrega, pago, productos, totales, notas.
  */
 export function buildWhatsAppMessage(input: BuildMessageInput): string {
-  const { cart, form, subtotal, deliveryFee, total, zone } = input;
+  const { orderCode, cart, form, subtotal, deliveryFee, total, zone } = input;
 
   const lines: string[] = [];
 
-  lines.push("🛒 *NUEVO PEDIDO — Feria Santa Eulalia*");
+  lines.push("*NUEVO PEDIDO — Feria Santa Eulalia*");
+  lines.push(`*Código:* ${orderCode}`);
   lines.push("");
-  lines.push("👤 *Cliente*");
+
+  lines.push("*[CLIENTE]*");
   lines.push(`• Nombre: ${form.name}`);
   lines.push(`• Teléfono: ${form.phone}`);
+  lines.push("");
+
+  lines.push("*[ENTREGA]*");
+  lines.push(`• Tipo: ${DELIVERY_LABELS[form.deliveryType]}`);
   if (form.deliveryType === "domicilio") {
-    lines.push(`• Dirección: ${form.address}`);
     if (zone) lines.push(`• Zona: ${zone.id} — ${zone.name}`);
-  } else {
-    lines.push("• Modalidad: Retiro en punto físico");
+    lines.push(`• Dirección: ${form.address}`);
   }
   lines.push(`• Horario: ${form.schedule}`);
   lines.push("");
 
-  lines.push("📦 *Productos*");
+  lines.push("*[PAGO]*");
+  lines.push(`• Método: ${PAYMENT_LABELS[form.paymentMethod]}`);
+  lines.push("");
+
+  lines.push("*[PRODUCTOS]*");
   cart.forEach((item, idx) => {
     const subtotalItem = item.product.price * item.quantity;
     lines.push(
@@ -60,7 +79,7 @@ export function buildWhatsAppMessage(input: BuildMessageInput): string {
   });
   lines.push("");
 
-  lines.push("💰 *Totales*");
+  lines.push("*[TOTALES]*");
   lines.push(`• Subtotal: ${formatCRC(subtotal)}`);
   if (form.deliveryType === "domicilio") {
     lines.push(`• Envío: ${formatCRC(deliveryFee)}`);
@@ -68,15 +87,10 @@ export function buildWhatsAppMessage(input: BuildMessageInput): string {
     lines.push(`• Envío: Retiro (sin costo)`);
   }
   lines.push(`• *TOTAL: ${formatCRC(total)}*`);
-  lines.push("");
-
-  lines.push("💳 *Pago*");
-  lines.push(`• Método: ${PAYMENT_LABELS[form.paymentMethod]}`);
-  lines.push(`• Modalidad: ${DELIVERY_LABELS[form.deliveryType]}`);
 
   if (form.notes && form.notes.trim().length > 0) {
     lines.push("");
-    lines.push("📝 *Notas*");
+    lines.push("*[NOTAS]*");
     lines.push(form.notes.trim());
   }
 
