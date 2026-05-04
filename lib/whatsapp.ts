@@ -27,13 +27,14 @@ const DELIVERY_LABELS: Record<string, string> = {
 };
 
 /**
- * Genera un código único de pedido tipo FSE-2026-XXXX.
- * Suficiente para volumen bajo sin backend; ~1.6M combinaciones por año.
+ * Genera un código corto de pedido: una letra A-Z + guión + 4 dígitos.
+ * Ejemplo: A-1234. Fácil de dictar por teléfono.
+ * 260.000 combinaciones; suficiente para un día de feria sin colisiones realistas.
  */
 export function generateOrderCode(): string {
-  const year = new Date().getFullYear();
-  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `FSE-${year}-${random}`;
+  const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+  const number = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+  return `${letter}-${number}`;
 }
 
 /**
