@@ -3,33 +3,21 @@ import { Product, Combo, Zone, Category } from "@/lib/types";
 export const ZONES: Zone[] = [
   {
     id: 1,
-    name: "Santa Eulalia centro",
+    name: "De Y Griega hasta El Rincón y alrededores",
     fee: 1500,
     schedule: ["8:00 — 10:00 AM", "10:00 AM — 12:00 PM"],
   },
   {
     id: 2,
-    name: "San Rafael de Heredia",
-    fee: 2000,
-    schedule: ["9:00 — 11:00 AM", "11:00 AM — 1:00 PM"],
+    name: "Calle Nueva y alrededores",
+    fee: 1000,
+    schedule: ["8:00 — 10:00 AM", "10:00 AM — 12:00 PM"],
   },
   {
     id: 3,
-    name: "Heredia centro",
-    fee: 2500,
-    schedule: ["10:00 AM — 12:00 PM", "1:00 — 3:00 PM"],
-  },
-  {
-    id: 4,
-    name: "San Pablo / San Joaquín",
-    fee: 3000,
-    schedule: ["11:00 AM — 1:00 PM", "2:00 — 4:00 PM"],
-  },
-  {
-    id: 5,
-    name: "Barva / San Isidro",
-    fee: 3500,
-    schedule: ["12:00 — 2:00 PM", "2:00 — 4:00 PM"],
+    name: "Y Griega al Cruce, Barrio San José",
+    fee: 2000,
+    schedule: ["9:00 — 11:00 AM", "11:00 AM — 1:00 PM"],
   },
 ];
 

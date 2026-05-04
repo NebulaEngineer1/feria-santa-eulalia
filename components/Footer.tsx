@@ -20,8 +20,8 @@ export function Footer() {
             </div>
             <h2 className="font-display text-4xl sm:text-5xl text-ink tracking-tightest leading-[0.95]">
               Llegamos a
-              <span className="italic font-light"> 5 zonas </span>
-              de Heredia.
+              <span className="italic font-light"> 3 zonas </span>
+              de Atenas.
             </h2>
             <p className="mt-5 text-ink-soft leading-relaxed max-w-md">
               Pedidos hasta las 7 AM se entregan el mismo día. Después, se programan para el siguiente día de feria.

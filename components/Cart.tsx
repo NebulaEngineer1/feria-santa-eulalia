@@ -429,7 +429,7 @@ function CheckoutStep({
             active={form.deliveryType === "domicilio"}
             onClick={() => onChange("deliveryType", "domicilio" as DeliveryType)}
             title="A domicilio"
-            subtitle="5 zonas"
+            subtitle="3 zonas"
           />
           <ToggleCard
             active={form.deliveryType === "retiro"}

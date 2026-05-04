@@ -76,7 +76,7 @@ export function Hero() {
         <div className="mt-16 sm:mt-20 pt-6 border-t border-moss-100 grid grid-cols-2 sm:grid-cols-4 gap-y-6 sm:gap-x-8 animate-fade-up" style={{ animationDelay: "400ms" }}>
           <Stat label="Productores locales" value="18" suffix="fincas" />
           <Stat label="Días de entrega" value="2" suffix="vie · sáb" />
-          <Stat label="Zonas cubiertas" value="5" suffix="rutas" />
+          <Stat label="Zonas cubiertas" value="3" suffix="rutas" />
           <Stat label="Tiempo de entrega" value="2-4h" suffix="el mismo día" />
         </div>
       </div>

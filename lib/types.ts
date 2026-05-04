@@ -44,7 +44,7 @@ export interface CartItem {
 
 export type DeliveryType = "domicilio" | "retiro";
 export type PaymentMethod = "sinpe" | "tarjeta" | "efectivo";
-export type ZoneId = 1 | 2 | 3 | 4 | 5;
+export type ZoneId = 1 | 2 | 3;
 
 export interface Zone {
   id: ZoneId;
